@@ -765,7 +765,7 @@ Function UpdateNPCs()
 								;more than 6 room lengths away from the player -> teleport to a room closer to the player
 								If dist > 50 Then
 									If Rand(70)=1 Then
-										If PlayerRoom\RoomTemplate\Name <> "exit1" And PlayerRoom\RoomTemplate\Name <> "gatea" And PlayerRoom\RoomTemplate\Name <> "pocketdimension" Then
+										If PlayerRoom\RoomTemplate\Name <> "exit1" And PlayerRoom\RoomTemplate\Name <> "gatea" And PlayerRoom\RoomTemplate\Name <> "room049" And PlayerRoom\RoomTemplate\Name <> "pocketdimension" And PlayerRoom\RoomTemplate\Name <> "dimension1499" Then
 											For w.waypoints = Each WayPoints
 												If w\door=Null And Rand(5)=1 Then
 													x = Abs(EntityX(Collider)-EntityX(w\obj,True))
@@ -1290,7 +1290,7 @@ Function UpdateNPCs()
 									If ProjectedX()>0 And ProjectedX()<GraphicWidth Then
 										If ProjectedY()>0 And ProjectedY()<GraphicHeight Then
 											If EntityVisible(Collider, n\Collider) Then
-												If (BlinkTimer < - 16 Or BlinkTimer > - 6)
+												If (BlinkTimer < - 16 Or BlinkTimer > - 6 And WearingNightVision <> 2) ;prevent super NV folks from triggering 096
 													PlaySound_Strict LoadTempSound("SFX\SCP\096\Triggered.ogg")
 													
 													CurrCameraZoom = 10
@@ -1630,7 +1630,7 @@ Function UpdateNPCs()
 									
 									If ProjectedX()>0 And ProjectedX()<GraphicWidth Then
 										If ProjectedY()>0 And ProjectedY()<GraphicHeight Then
-											If EntityVisible(Collider, n\Collider) Then
+											If EntityVisible(Collider, n\Collider) And WearingNightVision <> 2 Then
 												If (BlinkTimer < - 16 Or BlinkTimer > - 6)
 													PlaySound_Strict LoadTempSound("SFX\SCP\096\Triggered.ogg")
 													
@@ -3650,7 +3650,7 @@ Function UpdateNPCs()
 							PointEntity pvt, n\obj2
 							MoveEntity pvt, 0,0,8.0
 							PositionEntity n\obj2, EntityX(pvt),EntityY(pvt),EntityZ(pvt)
-							FreeEntity pvt
+							FreeEntity pvti
 						Else
 							HideEntity n\obj2
 						EndIf

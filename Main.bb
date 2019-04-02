@@ -210,7 +210,7 @@ Global CanSave% = True
 
 AppTitle "SCP - Containment Breach v"+VersionNumber
 
-PlayStartupVideos()
+;PlayStartupVideos()
 
 ;---------------------------------------------------------------------------------------------------------------------
 
@@ -688,7 +688,7 @@ Function UpdateConsole()
 							CreateConsoleMsg("Spawns an item at the player's location.")
 							CreateConsoleMsg("Any name that can appear in your inventory")
 							CreateConsoleMsg("is a valid parameter.")
-							CreateConsoleMsg("Example: spawnitem Key Card Omni")
+							CreateConsoleMsg("Example: spawnitem Keycard Omni")
 							CreateConsoleMsg("******************************")
 						Case "spawn"
 							CreateConsoleMsg("HELP - spawn")
@@ -1611,7 +1611,7 @@ Global NuclearSirenSFX%
 
 Global CameraSFX  
 
-Global StoneDragSFX% 
+Global StoneDragSFX%
 
 Global GunshotSFX% 
 Global Gunshot2SFX% 
@@ -2291,12 +2291,12 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 				If showmsg = True Then
 					If d\locked Then
 						PlaySound_Strict KeyCardSFX2
-						Msg = "The keycard was inserted into the slot but nothing happened."
+						Msg = "You swipe the keycard, but nothing happens."
 						MsgTimer = 70 * 7
 						Return
 					Else
 						PlaySound_Strict KeyCardSFX1
-						Msg = "The keycard was inserted into the slot."
+						Msg = "You swipe your keycard."
 						MsgTimer = 70 * 7	
 					EndIf
 				EndIf
@@ -2305,7 +2305,7 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 				If showmsg = True Then 
 					PlaySound_Strict KeyCardSFX2					
 					If d\locked Then
-						Msg = "The keycard was inserted into the slot but nothing happened."
+						Msg = "You swipe the keycard, but nothing happens."
 					Else
 						Msg = "A keycard with security clearance "+d\KeyCard+" or higher is required to operate this door."
 					EndIf
@@ -2323,13 +2323,13 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 		If temp <> 0 Then
 			PlaySound_Strict ScannerSFX1
 			If (Instr(Msg,"You placed your")=0) Or (MsgTimer < 70*3) Then
-				Msg = "You place the palm of the hand onto the scanner. The scanner reads: "+Chr(34)+"DNA verified. Access granted."+Chr(34)
+				Msg = "The scanner reads: "+Chr(34)+"DNA verified. Access granted."+Chr(34)
 			EndIf
 			MsgTimer = 70 * 10
 		Else
 			If showmsg = True Then 
 				PlaySound_Strict ScannerSFX2
-				Msg = "You placed your palm onto the scanner. The scanner reads: "+Chr(34)+"DNA does not match known sample. Access denied."+Chr(34)
+				Msg = "The scanner reads: "+Chr(34)+"DNA does not match known sample. Access denied."+Chr(34)
 				MsgTimer = 70 * 10
 			EndIf
 			Return			
@@ -2341,22 +2341,22 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 					PlaySound_Strict ButtonSFX2
 					If PlayerRoom\RoomTemplate\Name <> "room2elevator" Then
                         If d\open Then
-                            Msg = "You pushed the button but nothing happened."
+                            Msg = "You push the button, but nothing happens."
                         Else    
-                            Msg = "The door appears to be locked."
+                            Msg = "The door seems to be locked."
                         EndIf    
                     Else
-                        Msg = "The elevator appears to be broken."
+                        Msg = "The elevator seems to be broken."
                     EndIf
 					MsgTimer = 70 * 5
 				Else
 					If d\IsElevatorDoor = 1 Then
-						Msg = "You called the elevator."
+						Msg = "You call the elevator."
 						MsgTimer = 70 * 5
 					ElseIf d\IsElevatorDoor = 3 Then
 						Msg = "The elevator is already on this floor."
 						MsgTimer = 70 * 5
-					ElseIf (Msg<>"You called the elevator.")
+					ElseIf (Msg<>"You call the elevator.")
 						If (Msg="You already called the elevator.") Or (MsgTimer<70*3)	
 							Select Rand(10)
 								Case 1
@@ -2366,7 +2366,7 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 									Msg = "Pressing it harder does not make the elevator come faster."
 									MsgTimer = 70 * 7
 								Case 3
-									Msg = "If you continue pressing this button I will generate a Memory Access Violation."
+									Msg = "Keep pressing. Go on. Keep going."
 									MsgTimer = 70 * 7
 								Default
 									Msg = "You already called the elevator."
@@ -3514,6 +3514,9 @@ Function QuickLoadEvents()
 							PositionEntity e\room\NPC[0]\Collider,EntityX(e\room\Objects[4],True),EntityY(e\room\Objects[4],True)+3,EntityZ(e\room\Objects[4],True)
 							ResetEntity e\room\NPC[0]\Collider
 							Exit
+						ElseIf n\NPCtype = NPCtypeZombie And n\State = 0 Then
+							n\State = 1
+							SetNPCFrame(n, 155)
 						EndIf
 					Next
 					If e\room\NPC[0]=Null
@@ -4373,7 +4376,8 @@ Function MouseLook()
 	CameraShake = Max(CameraShake - (FPSfactor / 10), 0)
 	
 	;CameraZoomTemp = CurveValue(CurrCameraZoom,CameraZoomTemp, 5.0)
-	CameraZoom(Camera, Min(1.0+(CurrCameraZoom/400.0),1.1))
+	;CameraZoom(Camera, Min(1.0+(CurrCameraZoom/400.0),1.1))
+	CameraZoom(Camera, Min(1.0+(CurrCameraZoom/400.0),1.1) / Tan((2*ATan(Tan((90)/2)*RealGraphicWidth/RealGraphicHeight))/2.0))
 	CurrCameraZoom = Max(CurrCameraZoom - FPSfactor, 0)
 	
 	If KillTimer >= 0 And FallTimer >=0 Then
@@ -5182,7 +5186,7 @@ Function DrawGUI()
 							For z% = 0 To OtherSize - 1
 								If OtherOpen\SecondInv[z]<>Null
 									Local name$=OtherOpen\SecondInv[z]\itemtemplate\tempname
-									If name$<>"25ct" And name$<>"coin" And name$<>"key" And name$<>"scp860" And name$<>"scp714" Then
+									If name$<>"25ct" And name$<>"50ct" And name$<>"coin" And name$<>"key" And name$<>"scp860" And name$<>"scp714" Then
 										isEmpty=False
 										Exit
 									EndIf
@@ -5421,14 +5425,14 @@ Function DrawGUI()
 						SelectedItem = Null
 					ElseIf Inventory(MouseSlot) <> SelectedItem
 						Select SelectedItem\itemtemplate\tempname
-							Case "paper","key1","key2","key3","key4","key5","key6","misc","oldpaper","badge","ticket","25ct","coin","key","scp860"
+							Case "paper","key1","key2","key3","key4","key5","key6","misc","oldpaper","badge","ticket","25ct","50ct","coin","key","scp860","scp714"
 								;[Block]
 								If Inventory(MouseSlot)\itemtemplate\tempname = "clipboard" Then
 									;Add an item to clipboard
 									Local added.Items = Null
 									Local b$ = SelectedItem\itemtemplate\tempname
 									Local b2$ = SelectedItem\itemtemplate\name
-									If (b<>"misc" And b<>"25ct" And b<>"coin" And b<>"key" And b<>"scp860" And b<>"scp714") Or (b2="Playing Card" Or b2="Mastercard") Then
+									If (b<>"misc" And b<>"25ct" And b<>"50ct" And b<>"coin" And b<>"key" And b<>"scp860" And b<>"scp714") Or (b2="Playing Card" Or b2="Mastercard") Then
 										For c% = 0 To Inventory(MouseSlot)\invSlots-1
 											If (Inventory(MouseSlot)\SecondInv[c] = Null)
 												If SelectedItem <> Null Then
@@ -5466,7 +5470,7 @@ Function DrawGUI()
 										MsgTimer = 70 * 5
 									EndIf
 								ElseIf Inventory(MouseSlot)\itemtemplate\tempname = "wallet" Then
-									;Add an item to clipboard
+									;Add an item to the wallet
 									added.Items = Null
 									b$ = SelectedItem\itemtemplate\tempname
 									b2$ = SelectedItem\itemtemplate\name
@@ -5476,7 +5480,7 @@ Function DrawGUI()
 												If SelectedItem <> Null Then
 													Inventory(MouseSlot)\SecondInv[c] = SelectedItem
 													Inventory(MouseSlot)\state = 1.0
-													If b<>"25ct" And b<>"coin" And b<>"key" And b<>"scp860"
+													If b<>"25ct" And b<>"50ct" And b<>"coin" And b<>"key" And b<>"scp860" And b<>"scp714"
 														SetAnimTime Inventory(MouseSlot)\model,3.0
 													EndIf
 													Inventory(MouseSlot)\invimg = Inventory(MouseSlot)\itemtemplate\invimg
@@ -5636,12 +5640,16 @@ Function DrawGUI()
 						If WearingNightVision = 2 Then
 							Msg = "You removed the goggles."
 							CameraFogFar = StoredCameraFogFar
+							WireframeState = 0
+							WireFrame 0
 						Else
-							Msg = "You put on the goggles."
+							Msg = "...?!"
 							WearingGasMask = 0
 							WearingNightVision = 0
 							StoredCameraFogFar = CameraFogFar
 							CameraFogFar = 30
+							WireframeState = 1
+							WireFrame 1
 						EndIf
 						
 						WearingNightVision = (Not WearingNightVision) * 2
@@ -5720,7 +5728,7 @@ Function DrawGUI()
 					;[Block]
 					;InvOpen = True
 					;[End Block]
-				Case "key1", "key2", "key3", "key4", "key5", "key6", "keyomni", "scp860", "hand", "hand2", "25ct"
+				Case "key1", "key2", "key3", "key4", "key5", "key6", "keyomni", "scp860", "hand", "hand2", "25ct", "50ct"
 					;[Block]
 					DrawImage(SelectedItem\itemtemplate\invimg, GraphicWidth / 2 - ImageWidth(SelectedItem\itemtemplate\invimg) / 2, GraphicHeight / 2 - ImageHeight(SelectedItem\itemtemplate\invimg) / 2)
 					;[End Block]
@@ -7938,7 +7946,7 @@ Function LoadEntities()
 	Cls
 	SetBuffer BackBuffer()
 	
-	Dark = CreateSprite(Camera)
+	Dark = CreateSprite(ark_blur_cam)
 	ScaleSprite(Dark, Max(GraphicWidth / 1240.0, 1.0), Max(GraphicHeight / 960.0 * 0.8, 0.8))
 	EntityTexture(Dark, DarkTexture)
 	EntityBlend (Dark, 1)
@@ -7955,7 +7963,7 @@ Function LoadEntities()
 	
 	TeslaTexture = LoadTexture_Strict("GFX\map\tesla.jpg", 1+2)
 	
-	Light = CreateSprite(Camera)
+	Light = CreateSprite(ark_blur_cam)
 	ScaleSprite(Light, Max(GraphicWidth / 1240.0, 1.0), Max(GraphicHeight / 960.0 * 0.8, 0.8))
 	EntityTexture(Light, LightTexture)
 	EntityBlend (Light, 1)
@@ -8451,24 +8459,6 @@ Function InitNewGame()
 		If (r\RoomTemplate\Name = "start" And IntroEnabled = False) Then 
 			PositionEntity (Collider, EntityX(r\obj)+3584*RoomScale, 704*RoomScale, EntityZ(r\obj)+1024*RoomScale)
 			PlayerRoom = r
-			it = CreateItem("Class D Orientation Leaflet", "paper", 1, 1, 1)
-			it\Picked = True
-			it\Dropped = -1
-			it\itemtemplate\found=True
-			Inventory(0) = it
-			HideEntity(it\collider)
-			EntityType (it\collider, HIT_ITEM)
-			EntityParent(it\collider, 0)
-			ItemAmount = ItemAmount + 1
-			it = CreateItem("Document SCP-173", "paper", 1, 1, 1)
-			it\Picked = True
-			it\Dropped = -1
-			it\itemtemplate\found=True
-			Inventory(1) = it
-			HideEntity(it\collider)
-			EntityType (it\collider, HIT_ITEM)
-			EntityParent(it\collider, 0)
-			ItemAmount = ItemAmount + 1
 		ElseIf (r\RoomTemplate\Name = "173" And IntroEnabled) Then
 			PositionEntity (Collider, EntityX(r\obj), 1.0, EntityZ(r\obj))
 			PlayerRoom = r
@@ -9424,6 +9414,19 @@ Function Use914(item.Items, setting$, x#, y#, z#)
 	
 	Local it2.Items
 	Select item\itemtemplate\name
+		Case "Quarter", "Half-Dollar"
+			Select setting
+				Case "rough", "coarse"
+					d.Decals = CreateDecal(0, x, 8 * RoomScale + 0.005, z, 90, Rand(360), 0)
+					d\Size = 0.12 : ScaleSprite(d\obj, d\Size, d\Size)
+					RemoveItem(item)
+				Case "1:1"
+					PositionEntity(item\collider, x, y, z)
+					ResetEntity(item\collider)
+				Case "fine", "very fine"
+					it2 = CreateItem("Half-Dollar", "50ct", x, y, z)
+					RemoveItem(item)
+			End Select
 		Case "Gas Mask", "Heavy Gas Mask"
 			Select setting
 				Case "rough", "coarse"
@@ -9473,7 +9476,7 @@ Function Use914(item.Items, setting$, x#, y#, z#)
 					it2 = CreateItem("Bulky Ballistic Vest", "veryfinevest", x, y, z)
 					RemoveItem(item)
 			End Select
-		Case "Clipboard"
+		Case "Clipboard", "Wallet"
 			Select setting
 				Case "rough", "coarse"
 					d.Decals = CreateDecal(7, x, 8 * RoomScale + 0.005, z, 90, Rand(360), 0)
@@ -9597,152 +9600,30 @@ Function Use914(item.Items, setting$, x#, y#, z#)
 					it2 = CreateItem("Strange Bottle", "veryfinefirstaid", x, y, z)
 			End Select
 			RemoveItem(item)
-		Case "Level 1 Key Card", "Level 2 Key Card", "Level 3 Key Card", "Level 4 Key Card", "Level 5 Key Card", "Key Card"
+		Case "Level 1 Keycard", "Level 2 Keycard", "Level 3 Keycard", "Level 4 Keycard", "Level 5 Keycard", "Keycard"
 			Select setting
 				Case "rough", "coarse"
 					d.Decals = CreateDecal(0, x, 8 * RoomScale + 0.005, z, 90, Rand(360), 0)
 					d\Size = 0.07 : ScaleSprite(d\obj, d\Size, d\Size)
 				Case "1:1"
 					it2 = CreateItem("Playing Card", "misc", x, y, z)
-				Case "fine"
+				Case "fine", "very fine"
 					Select item\itemtemplate\name
-						Case "Level 1 Key Card"
-							Select SelectedDifficulty\otherFactors
-								Case EASY
-									it2 = CreateItem("Level 2 Key Card", "key2", x, y, z)
-								Case NORMAL
-									If Rand(5)=1 Then
-										it2 = CreateItem("Mastercard", "misc", x, y, z)
-									Else
-										it2 = CreateItem("Level 2 Key Card", "key2", x, y, z)
-									EndIf
-								Case HARD
-									If Rand(4)=1 Then
-										it2 = CreateItem("Mastercard", "misc", x, y, z)
-									Else
-										it2 = CreateItem("Level 2 Key Card", "key2", x, y, z)
-									EndIf
-							End Select
-						Case "Level 2 Key Card"
-							Select SelectedDifficulty\otherFactors
-								Case EASY
-									it2 = CreateItem("Level 3 Key Card", "key3", x, y, z)
-								Case NORMAL
-									If Rand(4)=1 Then
-										it2 = CreateItem("Mastercard", "misc", x, y, z)
-									Else
-										it2 = CreateItem("Level 3 Key Card", "key3", x, y, z)
-									EndIf
-								Case HARD
-									If Rand(3)=1 Then
-										it2 = CreateItem("Mastercard", "misc", x, y, z)
-									Else
-										it2 = CreateItem("Level 3 Key Card", "key3", x, y, z)
-									EndIf
-							End Select
-						Case "Level 3 Key Card"
-							Select SelectedDifficulty\otherFactors
-								Case EASY
-									If Rand(10)=1 Then
-										it2 = CreateItem("Level 4 Key Card", "key4", x, y, z)
-									Else
-										it2 = CreateItem("Playing Card", "misc", x, y, z)	
-									EndIf
-								Case NORMAL
-									If Rand(15)=1 Then
-										it2 = CreateItem("Level 4 Key Card", "key4", x, y, z)
-									Else
-										it2 = CreateItem("Playing Card", "misc", x, y, z)	
-									EndIf
-								Case HARD
-									If Rand(20)=1 Then
-										it2 = CreateItem("Level 4 Key Card", "key4", x, y, z)
-									Else
-										it2 = CreateItem("Playing Card", "misc", x, y, z)	
-									EndIf
-							End Select
-						Case "Level 4 Key Card"
-							Select SelectedDifficulty\otherFactors
-								Case EASY
-									it2 = CreateItem("Level 5 Key Card", "key5", x, y, z)
-								Case NORMAL
-									If Rand(4)=1 Then
-										it2 = CreateItem("Mastercard", "misc", x, y, z)
-									Else
-										it2 = CreateItem("Level 5 Key Card", "key5", x, y, z)
-									EndIf
-								Case HARD
-									If Rand(3)=1 Then
-										it2 = CreateItem("Mastercard", "misc", x, y, z)
-									Else
-										it2 = CreateItem("Level 5 Key Card", "key5", x, y, z)
-									EndIf
-							End Select
-						Case "Level 5 Key Card"	
-							Local CurrAchvAmount%=0
-							For i = 0 To MAXACHIEVEMENTS-1
-								If Achievements(i)=True
-									CurrAchvAmount=CurrAchvAmount+1
-								EndIf
-							Next
-							
-							DebugLog CurrAchvAmount
-							
-							Select SelectedDifficulty\otherFactors
-								Case EASY
-									If Rand(0,((MAXACHIEVEMENTS-1)*3)-((CurrAchvAmount-1)*3))=0
-										it2 = CreateItem("Key Card Omni", "key6", x, y, z)
-									Else
-										it2 = CreateItem("Mastercard", "misc", x, y, z)
-									EndIf
-								Case NORMAL
-									If Rand(0,((MAXACHIEVEMENTS-1)*4)-((CurrAchvAmount-1)*3))=0
-										it2 = CreateItem("Key Card Omni", "key6", x, y, z)
-									Else
-										it2 = CreateItem("Mastercard", "misc", x, y, z)
-									EndIf
-								Case HARD
-									If Rand(0,((MAXACHIEVEMENTS-1)*5)-((CurrAchvAmount-1)*3))=0
-										it2 = CreateItem("Key Card Omni", "key6", x, y, z)
-									Else
-										it2 = CreateItem("Mastercard", "misc", x, y, z)
-									EndIf
-							End Select		
-					End Select
-				Case "very fine"
-					CurrAchvAmount%=0
-					For i = 0 To MAXACHIEVEMENTS-1
-						If Achievements(i)=True
-							CurrAchvAmount=CurrAchvAmount+1
-						EndIf
-					Next
-					
-					DebugLog CurrAchvAmount
-					
-					Select SelectedDifficulty\otherFactors
-						Case EASY
-							If Rand(0,((MAXACHIEVEMENTS-1)*3)-((CurrAchvAmount-1)*3))=0
-								it2 = CreateItem("Key Card Omni", "key6", x, y, z)
-							Else
-								it2 = CreateItem("Mastercard", "misc", x, y, z)
-							EndIf
-						Case NORMAL
-							If Rand(0,((MAXACHIEVEMENTS-1)*4)-((CurrAchvAmount-1)*3))=0
-								it2 = CreateItem("Key Card Omni", "key6", x, y, z)
-							Else
-								it2 = CreateItem("Mastercard", "misc", x, y, z)
-							EndIf
-						Case HARD
-							If Rand(0,((MAXACHIEVEMENTS-1)*5)-((CurrAchvAmount-1)*3))=0
-								it2 = CreateItem("Key Card Omni", "key6", x, y, z)
-							Else
-								it2 = CreateItem("Mastercard", "misc", x, y, z)
-							EndIf
+						Case "Level 1 Keycard"
+							it2 = CreateItem("Level 2 Keycard", "key2", x, y, z)
+						Case "Level 2 Keycard"
+							it2 = CreateItem("Level 3 Keycard", "key3", x, y, z)
+						Case "Level 3 Keycard"
+							it2 = CreateItem("Level 4 Keycard", "key4", x, y, z)
+						Case "Level 4 Keycard"
+							it2 = CreateItem("Level 5 Keycard", "key5", x, y, z)
+						Case "Level 5 Keycard"	
+							it2 = CreateItem("Keycard Omni", "key6", x, y, z)
 					End Select
 			End Select
 			
 			RemoveItem(item)
-		Case "Key Card Omni"
+		Case "Keycard Omni"
 			Select setting
 				Case "rough", "coarse"
 					d.Decals = CreateDecal(0, x, 8 * RoomScale + 0.005, z, 90, Rand(360), 0)
@@ -9754,7 +9635,7 @@ Function Use914(item.Items, setting$, x#, y#, z#)
 						it2 = CreateItem("Playing Card", "misc", x, y, z)			
 					EndIf	
 				Case "fine", "very fine"
-					it2 = CreateItem("Key Card Omni", "key6", x, y, z)
+					it2 = CreateItem("Keycard Omni", "key6", x, y, z)
 			End Select			
 			
 			RemoveItem(item)
@@ -9764,9 +9645,9 @@ Function Use914(item.Items, setting$, x#, y#, z#)
 					d.Decals = CreateDecal(0, x, 8 * RoomScale + 0.005, z, 90, Rand(360), 0)
 					d\Size = 0.07 : ScaleSprite(d\obj, d\Size, d\Size)
 				Case "1:1"
-					it2 = CreateItem("Level 1 Key Card", "key1", x, y, z)	
+					it2 = CreateItem("Level 1 Keycard", "key1", x, y, z)	
 			    Case "fine", "very fine"
-					it2 = CreateItem("Level 2 Key Card", "key2", x, y, z)
+					it2 = CreateItem("Level 2 Keycard", "key2", x, y, z)
 			End Select
 			RemoveItem(item)
 		Case "Mastercard"
@@ -9784,9 +9665,9 @@ Function Use914(item.Items, setting$, x#, y#, z#)
 					EntityType (it4\collider, HIT_ITEM)
 					EntityType (it5\collider, HIT_ITEM)
 				Case "1:1"
-					it2 = CreateItem("Level 1 Key Card", "key1", x, y, z)	
+					it2 = CreateItem("Level 1 Keycard", "key1", x, y, z)	
 			    Case "fine", "very fine"
-					it2 = CreateItem("Level 2 Key Card", "key2", x, y, z)
+					it2 = CreateItem("Level 2 Keycard", "key2", x, y, z)
 			End Select
 			RemoveItem(item)
 		Case "S-NAV 300 Navigator", "S-NAV 310 Navigator", "S-NAV Navigator", "S-NAV Navigator Ultimate"
@@ -10227,10 +10108,10 @@ Function Use427()
 		If I_427\Using=True Then
 			I_427\Timer = I_427\Timer + FPSfactor
 			If Injuries > 0.0 Then
-				Injuries = Max(Injuries - 0.0005 * FPSfactor,0.0)
+				Injuries = Max(Injuries - 0.001 * FPSfactor,0.0)
 			EndIf
 			If Bloodloss > 0.0 And Injuries <= 1.0 Then
-				Bloodloss = Max(Bloodloss - 0.001 * FPSfactor,0.0)
+				Bloodloss = Max(Bloodloss - 0.01 * FPSfactor,0.0)
 			EndIf
 			If Infect > 0.0 Then
 				Infect = Max(Infect - 0.001 * FPSfactor,0.0)
@@ -10259,6 +10140,9 @@ Function Use427()
 				MsgTimer = 70*5
 			ElseIf prevI427Timer < 70*180 And I_427\Timer => 70*180 Then
 				Msg = "You feel gentle muscle spasms all over your body."
+				MsgTimer = 70*5
+			ElseIf prevI427Timer < 70*350 And I_427\Timer => 70*350 Then
+				Msg = "Your aches are fading. Your mind moves quickly."
 				MsgTimer = 70*5
 			EndIf
 		Else
@@ -11324,86 +11208,7 @@ Function RenderWorld2()
 	EndIf
 	
 	If BlinkTimer < - 16 Or BlinkTimer > - 6
-		If WearingNightVision=2 And hasBattery<>0 Then ;show a HUD
-			NVTimer=NVTimer-FPSfactor
-			
-			If NVTimer<=0.0 Then
-				For np.NPCs = Each NPCs
-					np\NVX = EntityX(np\Collider,True)
-					np\NVY = EntityY(np\Collider,True)
-					np\NVZ = EntityZ(np\Collider,True)
-				Next
-				IsNVGBlinking% = True
-				ShowEntity NVBlink%
-				If NVTimer<=-10
-				NVTimer = 600.0
-			EndIf
-			EndIf
-			
-			Color 255,255,255
-			
-			AASetFont Font3
-			
-			Local plusY% = 0
-			If hasBattery=1 Then plusY% = 40
-			
-			AAText GraphicWidth/2,(20+plusY)*MenuScale,"REFRESHING DATA IN",True,False
-			
-			AAText GraphicWidth/2,(60+plusY)*MenuScale,Max(f2s(NVTimer/60.0,1),0.0),True,False
-			AAText GraphicWidth/2,(100+plusY)*MenuScale,"SECONDS",True,False
-			
-			temp% = CreatePivot() : temp2% = CreatePivot()
-			PositionEntity temp, EntityX(Collider), EntityY(Collider), EntityZ(Collider)
-			
-			Color 255,255,255;*(NVTimer/600.0)
-			
-			For np.NPCs = Each NPCs
-				If np\NVName<>"" And (Not np\HideFromNVG) Then ;don't waste your time if the string is empty
-					PositionEntity temp2,np\NVX,np\NVY,np\NVZ
-					dist# = EntityDistance(temp2,Collider)
-					If dist<23.5 Then ;don't draw text if the NPC is too far away
-						PointEntity temp, temp2
-						yawvalue# = WrapAngle(EntityYaw(Camera) - EntityYaw(temp))
-						xvalue# = 0.0
-						If yawvalue > 90 And yawvalue <= 180 Then
-							xvalue# = Sin(90)/90*yawvalue
-						Else If yawvalue > 180 And yawvalue < 270 Then
-							xvalue# = Sin(270)/yawvalue*270
-						Else
-							xvalue = Sin(yawvalue)
-						EndIf
-						pitchvalue# = WrapAngle(EntityPitch(Camera) - EntityPitch(temp))
-						yvalue# = 0.0
-						If pitchvalue > 90 And pitchvalue <= 180 Then
-							yvalue# = Sin(90)/90*pitchvalue
-						Else If pitchvalue > 180 And pitchvalue < 270 Then
-							yvalue# = Sin(270)/pitchvalue*270
-						Else
-							yvalue# = Sin(pitchvalue)
-						EndIf
-						
-						If (Not IsNVGBlinking%)
-						AAText GraphicWidth / 2 + xvalue * (GraphicWidth / 2),GraphicHeight / 2 - yvalue * (GraphicHeight / 2),np\NVName,True,True
-						AAText GraphicWidth / 2 + xvalue * (GraphicWidth / 2),GraphicHeight / 2 - yvalue * (GraphicHeight / 2) + 30.0 * MenuScale,f2s(dist,1)+" m",True,True
-					EndIf
-				EndIf
-				EndIf
-			Next
-			
-			FreeEntity (temp) : FreeEntity (temp2)
-			
-			Color 0,0,55
-			For k=0 To 10
-				Rect 45,GraphicHeight*0.5-(k*20),54,10,True
-			Next
-			Color 0,0,255
-			For l=0 To Floor((power%+50)*0.01)
-				Rect 45,GraphicHeight*0.5-(l*20),54,10,True
-			Next
-			DrawImage NVGImages,40,GraphicHeight*0.5+30,1
-			
-			Color 255,255,255
-		ElseIf WearingNightVision=1 And hasBattery<>0
+		If WearingNightVision=1 And hasBattery<>0
 			Color 0,55,0
 			For k=0 To 10
 				Rect 45,GraphicHeight*0.5-(k*20),54,10,True

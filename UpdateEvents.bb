@@ -2547,6 +2547,12 @@ Function UpdateEvents()
 												e\EventState2 = e\EventState2 + 1
 												PlaySound_Strict LoadTempSound("SFX\SCP\294\coin_drop.ogg")
 												inserted = True
+											ElseIf SelectedItem\itemtemplate\tempname="50ct"
+												RemoveItem(SelectedItem)
+												SelectedItem=Null
+												e\EventState2 = 2
+												PlaySound_Strict LoadTempSound("SFX\SCP\294\coin_drop.ogg")
+												inserted = True
 											EndIf
 										EndIf
 									EndIf
@@ -2603,7 +2609,7 @@ Function UpdateEvents()
 					;Remote Door Control
 					RemoteDoorOn = UpdateLever(e\room\Objects[5])
 					
-					If e\EventState > 0 And e\EventState < 200 Then
+					If e\EventState > 0 And e\EventState < 20 Then
 						e\EventState = e\EventState + FPSfactor
 						RotateEntity(e\room\Objects[3], CurveValue(-85, EntityPitch(e\room\Objects[3]), 5), EntityYaw(e\room\Objects[3]), 0)
 					EndIf 
@@ -5074,7 +5080,7 @@ Function UpdateEvents()
 						If e\EventState<90 Then e\EventState=CurveValue(90,e\EventState,500)
 						PositionEntity e\room\Objects[2], EntityX(e\room\Objects[2],True),(-130-448*Sin(e\EventState))*RoomScale,EntityZ(e\room\Objects[2],True),True
 						
-						If e\EventState2 > 0 And e\EventState2 < 200 Then
+						If e\EventState2 > 0 And e\EventState2 < 20 Then
 							e\EventState2 = e\EventState2 + FPSfactor
 							RotateEntity(e\room\Objects[1], CurveValue(85, EntityPitch(e\room\Objects[1]), 5), EntityYaw(e\room\Objects[1]), 0)
 						Else
@@ -5760,12 +5766,7 @@ Function UpdateEvents()
 									e\EventState= 70*190
 								EndIf
 							ElseIf e\EventState < 70*240
-								For n.NPCs = Each NPCs ;awake the zombies
-									If n\NPCtype = NPCtypeZombie And n\State = 0 Then
-										n\State = 1
-										SetNPCFrame(n, 155)
-									EndIf
-								Next
+								;This previously woke up the zombies, but this function was changed
 								e\EventState=70*241
 							EndIf
 						EndIf
@@ -7478,7 +7479,7 @@ Function UpdateEvents()
 						
 						If Distance(EntityX(Collider), EntityZ(Collider), EntityX(e\room\Objects[2], True), EntityZ(e\room\Objects[2], True)) < (170.0 * RoomScale) Then
 							
-							If setting = "rough" Or setting = "coarse" Then
+							If setting = "rough" Then
 								If e\EventState > 70 * 2.6 And e\EventState - FPSfactor2 < 70 * 2.6 Then PlaySound_Strict Death914SFX
 							EndIf
 							
@@ -7488,7 +7489,7 @@ Function UpdateEvents()
 										KillTimer = Min(-1, KillTimer)
 										BlinkTimer = -10
 										If e\SoundCHN <> 0 Then StopChannel e\SoundCHN
-										DeathMSG = Chr(34)+"A heavily mutilated corpse found inside the output booth of SCP-914. DNA testing identified the corpse as Class D Subject D-9341. "
+										DeathMSG = Chr(34)+"A heavily mutilated corpse was found inside the output booth of SCP-914. DNA testing identified the corpse as Class-D Subject D-9341. "
 										DeathMSG = DeathMSG + "The subject had obviously been "+Chr(34)+"refined"+Chr(34)+" by SCP-914 on the "+Chr(34)+"Rough"+Chr(34)+" setting, but we are still confused as to how he "
 										DeathMSG = DeathMSG + "ended up inside the intake booth and who or what wound the key."+Chr(34)
 									Case "coarse"
@@ -7528,7 +7529,23 @@ Function UpdateEvents()
 										MsgTimer = 70*8
 									Case "1:1"
 										InvertMouse = (Not InvertMouse)
-									Case "fine", "very fine"
+									Case "fine"
+										Msg = "You feel... better. Somehow."
+										MsgTimer = 70*8
+										HealTimer = 30
+										StaminaEffect = 0.5
+										StaminaEffectTimer = 60
+										BlinkEffect = 0.5
+										BlinkEffectTimer = 60
+										Bloodloss = 0
+										Injuries = 0
+										Infect = 0
+									Case "very fine"
+										StaminaEffect = 0
+										StaminaEffectTimer = 120
+										BlinkEffect = 0
+										BlinkEffectTimer = 120
+										HealTimer = 120
 										SuperMan = True
 								End Select
 								BlurTimer = 1000
