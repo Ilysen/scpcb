@@ -789,7 +789,8 @@ Function UpdateNPCs()
 									n\State = CurveValue(SoundVol, n\State, 3)
 									
 									;try to open doors
-									If Rand(20) = 1 Then
+									;If Rand(20) = 1 Then
+                                    If False Then
 										For d.Doors = Each Doors
 											If (Not d\locked) And d\open = False And d\Code = "" And d\KeyCard=0 Then
 												For i% = 0 To 1

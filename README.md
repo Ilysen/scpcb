@@ -20,3 +20,8 @@ A full list of changes includes:
 * Changed a lot of messages to present tense instead of past tense. (i.e. "You called the elevator." -> "You call the elevator.")
 * SCP-173 no longer spawns in SCP-049's containment chamber, but the 049-2 zombies start active and moving.
 * Changed several loading screens to be more canonically accurate.
+* SCP-173 no longer opens doors.
+* Running yourself through 914 on Fine has different effects.
+* New sounds for blast doors, elevators, glass breaking, and other things.
+* Light Containment storage rooms can spawn eyedrops, and higher level keycards.
+* Very Fine night vision goggles have been reworked.

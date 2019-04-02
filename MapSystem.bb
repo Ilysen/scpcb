@@ -4663,7 +4663,7 @@ Function FillRoom(r.Rooms)
 						Select True
 							Case (chance<0)
 								Exit
-							Case (chance<40) ;40% chance for a document
+							Case (chance<30) ;30% chance for a document
 								tempstr="Document SCP-"
 								Select Rand(1,6)
 									Case 1
@@ -4682,8 +4682,11 @@ Function FillRoom(r.Rooms)
 										tempstr=tempstr+"966"
 								End Select
 								tempstr2="paper"
-							Case (chance>=40) And (chance<45) ;5% chance for a key card
-								temp3%=Rand(1,2)
+							Case (chance>=30) And (chance<40) ;10% chance for eyedrops
+								tempstr="ReVision Eyedrops"
+								tempstr2="eyedrops"
+							Case (chance>=40) And (chance<45) ;5% chance for a key card (levels 1, 2, or 3)
+								temp3%=Rand(1,3)
 								tempstr="Level "+Str(temp3)+" Keycard"
 								tempstr2="key"+Str(temp3)
 							Case (chance>=45) And (chance<50) ;5% chance for a medkit
